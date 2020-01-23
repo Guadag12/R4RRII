@@ -18,6 +18,7 @@ Curso de Rstudio para interesados en Relaciones Internacionales y Ciencia Polít
 
 * Clase 8: Introducción a Shiny y dashboards
 
-### **¿Dudas o consultas?:**
+
+**¿Dudas o consultas?:**
   * Twitter: [guadag12](https://twitter.com/guadag12)
   * E-mail: guadagonz12@gmail.com
