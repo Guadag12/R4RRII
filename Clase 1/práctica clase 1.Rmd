@@ -1,0 +1,101 @@
+---
+title: "Práctica clase 1"
+author: "Guadalupe Gonzalez"
+date: "25/1/2020"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Práctica clase 1:
+
+### Creando un dpcumento en R
+
+1. Crear un script en R donde esté el código utilizado para la resolución de cada ejercicio y donde se pueden observar los resultados obtenidos (si puede ser en RMarkdown mejor, ya que se pueden ver los ejercicios y los resultados debajo del chunk).
+
+### R como calculadora
+
+2. Computar en R e imprimir los resultados:
+
+```{r}
+# A modo de ejemplo:
+1+1
+```
+
+a. $7+2$
+b. $-3 * 5$
+c. $\frac{8}{8^2+1}$
+d. $13^2$
+e. $\sqrt{144}$
+
+### Asignacion de variables numéricas
+
+3. Vamos a trabajar sobre la asignación de valores a variables jugando un poco con R como calculadora: 
+
+a. Generar una variable en R que se llame **"mi_variable_numerica_1"** y que tenga como valor $\sqrt{5^2 + 8^2}$. ¿Cuál es el resultado/valor final de esta variable? (imprimir el resultado como en el ejercio 1 o anotar el resultado con numeral (#) al lado del ejercicio)
+
+b. Crear una segunda variable en R que se llame **"mi_variable_numerica_2"** y que tenga como valor: $\frac{4^2}{5}$ .  ¿Cuál es el resultado/valor final de esta variable?
+
+c. Una vez que generemos ambas variables, vamos a dividir la variable numerica 1 por la dos generando una nueva variable llamada **"mi_variable_numerica_3"**. ¿Cuál es el valor de esta tercer variable?
+
+d. ¿Qué pasa si nuestra variable **mi_variable_numerica_2** cambia y enrealidad es $\frac{\sqrt-64}{4}$? ¿Cuál es su valor final de esta segunda variable? 
+
+e. Si queremos volver a calcular el ejercicio **c.** nuevamente con los valores del ejercicio **d.**. ¿Cuál sería entonces el valor de la división entre **"mi_variable_numerica_1"** y **"mi_variable_numerica_2"** siendo que cambiamos los valores de la segunda variable?
+
+
+### Texto en R
+
+4. Ahora, vamos a trabajar con characteres ó texto. 
+
+a. Generar una variable que se llame **"mi_variable_texto_1"** y que contenga la frase "Del ridículo no se vuelve".
+
+b. Averiguar el tamaño de la variable con la función __length()__.
+
+c. Agregar los siguientes valores a nuestra variable **"mi_variable_texto_1"** con la funcion __c()__:
+  * "La única verdad es la realidad"
+  * "Gobernar es fácil, lo difícil es conducir"
+  * "Sin independencia económica no hay posibilidad de justicia social"
+
+d. Volvemos a averiguar el tamaño de nuestra variable con la función __length()__.
+
+### Paquetes y librerías
+
+5. Trabajemos con paquetes!
+
+a. Carguemos la libreria **dplyr** y **tidyverse**con la funcion ___library()___.
+
+b. Googlear en internet para qué sirve y para qué se usa **dplyr** y redactemos abajo (se recomienda googlear "dplyr cran pdf" y utilizar la información que brinda el pdf).
+
+c. Enumeremos algunas de las funciones del paquete. Como por ejemplo: __sample()__
+
+d. En pocas palabras describí para qué sirven las funciones de: __arrange()__, __filter()__, __group_by()__.
+
+
+### Datasets y métricas
+
+6. Subamos un dataset!!
+
+a. Vamos a trabajar con un dataset de Ministros de defensa desde la vuelta de la democracia. Para eso carguemos el dataset en R el csv que esta en esta web: https://datos.gob.ar/dataset/defensa-ministros-defensa
+
+b. ¿Cuántas columnas y cuántas observaciones (filas) tiene?
+
+c. Usemos la función __names()__ para conocer el nombre de nuestras columnas.
+
+d. Usemos la función __head()__ para conocer las primeras observaciones de nuestra tabla.
+
+e. Corramos la siguiente linea de código para conocer el tiempo que duró cada ministro en el área:
+
+```{r}
+data <- data %>% mutate(cantidad_anios = (indice_tiempo_final - indice_tiempo_inicial) ) ## OJO! ACA hay que reemplazar "data" por el nombre que le hayamos puesto a nuestro dataset en el caso de que no lo hayamos llamado "data".
+```
+
+
+f. Usando el comando __summary()__ es posible conocer información relevante sobre nuestro dataset.
+¿En qué año se da el primer y el último ministro registrado? ¿Cuántos ministros tienen dos apellidos? ¿Cuánto es el promedio que duran los ministros en el cargo? ¿Y cuánto es el máximo tiempo que duró un ministro en el cargo?
+
+g. Usando la función __View()__ es posible ver la tabla, y cuando tiene pocos registros podemos sacar información relevante. ¿Cuál es el ministro que más duro en el cargo? ¿Cuál es el que menos duró? 
+
