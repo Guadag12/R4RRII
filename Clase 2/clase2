@@ -8,15 +8,13 @@ output: html_document
 
 ## Cuáles son los pasos recomendables a seguir cuando generamos un proyecto en R?
 
-Según [R for Data Scince (R4DS)](https://r4ds.had.co.nz/explore-intro.html) que es un libro Introductorio para aprender R elaborado por Garrett Grolemund & Hadley Wickham -que también tiene su [versión en español](https://es.r4ds.hadley.nz/)- cuando trabajamos con datos no podemos hacerlo de manera desordenada e improvisada, sino que tenemos que seguir ciertos pasos: 
+Según [R for Data Scince (R4DS)](https://r4ds.had.co.nz/explore-intro.html), es un libro Introductorio para aprender R elaborado por Garrett Grolemund & Hadley Wickham -que también tiene su [versión en español](https://es.r4ds.hadley.nz/)- cuando trabajamos con datos no podemos hacerlo de manera desordenada e improvisada, sino que es recomendable seguir ciertos pasos: 
 
 ```{r}
 knitr::include_graphics('Clases_R_Eze/Clase 2/images/r4ds_hadley.png', 1)
 ```
 
-En primer lugar **importar** el/los archivos. Una vez realizado esto, podemos empezar la fase de **"exploración"** de nuestros datos:
-
-La misma comienza con la limpieza y orden con el objetivo de que que queden en formato [**tidy**](https://vita.had.co.nz/papers/tidy-data.pdf), es decir, __"cada columna es una variable y cada fila una observación. Tener datos ordenados es importante porque si su estructura es consistente, puedes enfocar tus esfuerzos en las preguntas sobre los datos y no en luchar para que estos tengan la forma necesaria para diferentes funciones"__ señalan en R para Ciencia de Datos.
+En primer lugar **importar** el/los archivos. Una vez realizado esto, podemos empezar la fase de **"exploración"** de nuestros datos: La misma comienza con la limpieza y orden con el objetivo de que que queden en formato [**tidy**](https://vita.had.co.nz/papers/tidy-data.pdf), es decir, __"cada columna es una variable y cada fila una observación"__ señalan en R para Ciencia de Datos.
 En tercer lugar, hay que **transformarlos** o manipularlos, es decir, __" reducir las observaciones a aquellas que sean de interés (como todas las personas de una ciudad o todos los datos del último año), crear nuevas variables que sean funciones de variables ya existentes (como calcular la rapidez a partir de la velocidad y el tiempo) y calcular una serie de estadísticos de resumen (como recuentos y medias)"__; para luego **visualizarlos** y **modelarlos** - utilizar herramientas matematicas y computacionales con el objetivo de analizar patrones o predecir comportamientos -.
 
 En último lugar, se deben **comunicar** a otrxs dichos datos, ya que toda información que se procese pero no se comunique, dificilmente pueda ser utilizado posteriormente en la toma de decisión.
@@ -145,7 +143,7 @@ Como sabemos, cuidar de no sobre cargar la computadora es una parte escencial de
 
 Pero primero:
 
-### ¿Cómo funciona exactamente la memoria en un cpu?
+### ¿Cómo funciona exactamente la memoria?
 
 La **memoria** es utilizada para almacenar programas de la aplicación. Es decir, es un componente de almacenamiento, compuesto por **chips de memorias** que tienen **celulas** (casilleros ó celdas que se identifican por una dirección en estos chips de memoria). 
 ```{r}
@@ -209,22 +207,19 @@ Tidyverse es un paquete que contiene un múltiples paquetes que nos van a ayudar
 ```{r}
 knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse.png', 1)
 ```
+He aquí todas las funcionalidades de tidyverse según c ómo veniamos hsblando:
 
 
 ```{r}
 knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse_data_science.png', 1)
 ```
-
-
-
+Para comenzar a usar tidyverse resulta necesario instalarlo y cargar las librerías :
 
 ```{r}
 install.packages(tidyverse) #si no lo llegamos a tener instalado, instalemoslo. Si no, carguemos sólo la libreria
 
-library(tidyverse)
+library(tidyverse) #Observemos que al instalar tidyverse se instalan todas las librerías adjuntas
 ```
-
-
 
 Hoy vamos a trabajar con un [dataset de terrorismo global](https://www.kaggle.com/START-UMD/gtd/) elaborado y mantenido por investigadores del National Consortium for the Study of Terrorism and Responses to Terrorism (START), en la Universidad of Maryland, y que tiene información de ataques terroritas desde 1970 a 2017. 
 
@@ -256,6 +251,7 @@ names(data)
 ```{r}
 summary(data)
 ```
+Como vemos, resulta incómodo pedirle a R las medidas resumen de cada columna, siendo que ademas no llegamos a apreciar correctamente toda la información que hay.
 
 Una vez realizado esta pregunta, resulta relevante conocer qué información queremos saber con el objetivo de manipular más fácil nuestra información sin tantas columnas / observaciones que nos molesten y con la información adecuada. Para esto vamos a utilizar varias funciones:
 
@@ -281,11 +277,13 @@ En ese sentido, un comando en tidyverse tiene este formato:
 knitr::include_graphics('Clases_R_Eze/Clase 2/images/func_PIPE.png', 1)
 ```
 
+Comencemos!!!
+
 ```{r}
 data_pais_anio <- data %>% select(country, iyear) #si queremos generar un dataset que contenga sólo el país y el año en el que el ataque terrorista fue ejecutado
 ```
 
-Plantiémos una pregunta de investigacion: ¿Qué países de América sufrieron mayor cantidad de atentados por año? ¿de qué tipo fueron estos atentados?
+Plantiémos una pregunta de investigacion: ¿Qué países de América sufrieron mayor cantidad de atentados por año? ¿en qué tipo fueron estos atentados?
 
 1. **Seleccionemos sólo las columnas** que nos interesan:
 ```{r}
@@ -349,12 +347,14 @@ library(viridis)
 library(plotly)
 
 p <- data %>% 
+
   #manipulacion de datos:
   select(country_txt, iyear, region_txt, attacktype1_txt) %>% #como vemos podemos realizar visualizaciones desde tidyverse
   filter(country_txt == "Argentina" | country_txt == "Brazil",  iyear > 2000 ) %>%
   group_by(country_txt, iyear, attacktype1_txt) %>%
   summarise(cantidad = n()) %>% 
   arrange(desc(cantidad)) %>%
+  
   #visualizamos la info
   ggplot( aes(y=attacktype1_txt, x=cantidad, fill=country_txt)) +
     geom_boxplot() +
@@ -370,9 +370,6 @@ p <- data %>%
 p <- ggplotly(p)
 p
 ```
-```{r}
-unique(data_atentado$country_txt)
-```
 
 Por último: nos quedan los **join()**! Es una función muy importante, ya que nos permite unir tablas a partir de variables / columnas en común. Solo hay que chequear que las observaciones de la columna con la que vamos a unirla esten redactadas de la misma manera.
 
@@ -387,7 +384,6 @@ knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/primarykey.jpg', 1))
 Para más información: https://bloginspanish.wordpress.com/2015/06/21/diferencia-entre-llave-primaria-primary-key-y-llave-foranea-foreign-key/ 
 
 Una vez entendido esto, es posible realizar dichos joins, reconociendo cuáles son las columnas que debemos utilizar para hacer el join.
-
 En este sentido hay muchas maneras de hacer el join, en cada caso se debe aplicar el que corresponda:
 
 ```{r}
@@ -406,6 +402,9 @@ mapa_paises <- mapa_paises %>% filter(Code == "ARG" | Code == "BRA" | Code == "C
 
 ```{r}
 #podemos agregar info importante a nuestro dataset de data_atentado asi podemos unirlo con mapa_paises
+#la funcion case_when() aieve para generar una nueva variable cuyo valor este condicionado por otros valores de otra columna.
+# Este paso resulta necesario paea poder unir posteriormente los datsets
+
 data_atentado <- data_atentado %>% mutate(Code = case_when(
   country_txt == "Argentina" ~ 'ARG', 
   country_txt == "Brazil" ~ 'BRA',
@@ -424,13 +423,13 @@ data_atentado <- data_atentado %>% mutate(Code = case_when(
 ```
 
 
-1. debemos encontrar una columna/ multiples columnas que actúen de primary key y foreign key para poder unirlos
+1. Debemos encontrar una columna/ multiples columnas que actúen de primary key y foreign key para poder unirlos
 ```{r}
 
 data_map <- mapa_paises %>% inner_join(data_atentado, by = "Code")
 head(data_map)
 ```
-
+Una vez que los unimos podemos hacer un mapa:
 ```{r}
 library(leaflet)
 #generamos la paleta de colores
