@@ -1,0 +1,410 @@
+---
+title: "clase2"
+author: "guada"
+date: "18/1/2020"
+output: html_document
+---
+# CLASE 2: Manipulación de datos en R 
+
+## Cuáles son los pasos recomendables a seguir cuando generamos un proyecto en R?
+
+Según [R for Data Scince (R4DS)](https://r4ds.had.co.nz/explore-intro.html) que es un libro Introductorio para aprender R elaborado por Garrett Grolemund & Hadley Wickham -que también tiene su [versión en español](https://es.r4ds.hadley.nz/)- cuando trabajamos con datos no podemos hacerlo de manera desordenada e improvisada, sino que tenemos que seguir ciertos pasos: 
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/r4ds_hadley.png', 1)
+```
+
+En primer lugar **importar** el/los archivos. Una vez realizado esto, podemos empezar la fase de **"exploración"** de nuestros datos:
+
+La misma comienza con la limpieza y orden con el objetivo de que que queden en formato [**tidy**](https://vita.had.co.nz/papers/tidy-data.pdf), es decir, __"cada columna es una variable y cada fila una observación. Tener datos ordenados es importante porque si su estructura es consistente, puedes enfocar tus esfuerzos en las preguntas sobre los datos y no en luchar para que estos tengan la forma necesaria para diferentes funciones"__ señalan en R para Ciencia de Datos.
+En tercer lugar, hay que **transformarlos** o manipularlos, es decir, __" reducir las observaciones a aquellas que sean de interés (como todas las personas de una ciudad o todos los datos del último año), crear nuevas variables que sean funciones de variables ya existentes (como calcular la rapidez a partir de la velocidad y el tiempo) y calcular una serie de estadísticos de resumen (como recuentos y medias)"__; para luego **visualizarlos** y **modelarlos** - utilizar herramientas matematicas y computacionales con el objetivo de analizar patrones o predecir comportamientos -.
+
+En último lugar, se deben **comunicar** a otrxs dichos datos, ya que toda información que se procese pero no se comunique, dificilmente pueda ser utilizado posteriormente en la toma de decisión.
+
+
+
+## Tipos de objetos. Importancia de reconocerlos:
+
+En R los objetos pueden ser de diferentes tipos. Cada tipo tiene características particulares que lo distinguen de los demás. 
+
+Es **importante** reconocerlos porque algunas operaciones sólo pueden realizarse con tipos de objetos específicos.
+
+```{r}
+knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/tipo_datos.png', 1))
+```
+
+**Entero**: son los números enteros (sin decimales ni fracciones)
+
+```{r}
+#generamos una variable llamada "entero" que tiene un valor de "2398" y verificamos el tipo de variable que tira R.
+entero <- 2398
+
+entero
+
+typeof(entero)
+```
+
+**Double**: son números decimales
+
+```{r}
+double <- 3.14159265358979
+
+double <- double + 2.4343 #las variables numericas pueden ser modificadas usando R como calculadora
+
+double
+```
+
+```{r}
+#verificamos el tipo de variable que es nuestra variable double
+typeof(double)
+```
+
+
+**Character**: son secuencias de characteres (letras, espacios, signos) entre comillas -simples o dobles-.
+```{r}
+#generamos una variable llamada "character" que tenga el valor "Hello world!":
+
+character <- "Hello World!"
+
+#si queremos imprimir nuestra variable:
+print(character)
+
+#si queremos imprimirla sin comillas:
+print(character, quote = FALSE)
+
+#si queremos averiguar cuantas letras tiene:
+nchar(character)
+```
+
+**Factor**: son variables procesadas como categoricas
+
+```{r}
+#generamos una variable llamada "factor"
+factor <- c("Femenino", "Masculino", "No binario", "Femenino", "No binario", 
+            "Masculino", "Masculino", "Femenino", "Femenino", "No binario") 
+
+factor <- as.factor(factor) #le aclaramos a R que nuestra variable "factor" es un factor"
+
+table(factor) #la funcion table() nos devuelve la frecuencia con la que aparece cada una de nuestras categorias
+```
+
+**Lógicos**: sólo tienen dos valores posibles: verdadero (TRUE) y falso (FALSE). Representan si una condición o estado se cumple, es verdadero, o no, es falso.
+
+```{r}
+#en qué casos la variable factor es igual a "No binario"
+print(factor == "No binario") 
+```
+
+```{r}
+#¿Qué pasa con las operaciones condicionales en variables númericas?
+print(entero >= 5)
+```
+
+Para algunas operaciones en R resulta necesario utilizar los **operadores lógicos** y **condicionales**:
+
+```{r}
+knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/operadores_R.png', 1))
+```
+
+Por otro lado, otro tipo de datos son los **NA** y los **NULL**.
+Los **NA** corresponden a datos perdidos u omitidos sin intencionalidad del data entry. Si queremos saber si tenemos valores NA en nuestro dataset utilizamos la funcion **is.na()**:
+```{r}
+is.na()
+```
+
+Los **NULL** implica que no hay información  al respecto. 
+Si queremos saber si tenemos valores NA en nuestro dataset utilizamos la funcion **is.null()**.
+
+```{r}
+is.null()
+```
+
+### typeof()
+
+Por otro lado, si queremos consultarle a R por el tipo de dato que tenemos en nuestra columna usamos la función **typeof()**:
+```{r}
+typeof(nombre_dataset$nombre_columna) #el signo "$" se utiliza para llamar a una columna de nuestro dataset
+```
+
+En el caso de que qusieramos convertir el tipo de dato que tenemos a otro podemos usar la funcion **as...()**:
+```{r}
+#supongamos que tenemos una columna que tiene de tipo de datos un character y queremos convertirlo a numerico:
+
+nombre_dataset$nombre_columna <- as.numeric(as.character(nombre_dataset$nombre_columna))
+```
+
+```{r}
+#supongamos que queremos pasar de un numerico a un character:
+nombre_dataset$nombre_columna <- as.character(nombre_dataset$nombre_columna)
+```
+
+
+## Administración del espacio en memoria
+
+Como sabemos, 
+
+```{r}
+install.packages("pryr")
+library(pryr)
+```
+```{r}
+mem_used()
+```
+
+```{r}
+memory.size()
+```
+
+```{r}
+object_size(p3)
+```
+
+## Manipulación de datos
+
+Como habíamos dicho, manipular datos implica que una vez que tenemos nuestro dataset ordenado en formato **tidy** podemos generar variables que sean de nuestro interes (medidas resumen), agrupar y ordenar nuestro dataset en pos de hacer un análisis más eficiente y que nos lleve menos memoria.
+
+Un buen paquete para trabajar principalmente en la manipulación de datos es **tidyverse**, ya que nos da un montón de funciones que nos facilita esta tarea.
+
+###¿Qué es tidyverse?
+
+Tidyverse es un paquete que contiene un múltiples paquetes que nos van a ayudar no sólo, pero principalmente, a manipular datos. 
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse_data_science.png', 1)
+```
+
+
+
+
+```{r}
+install.packages(tidyverse) #si no lo llegamos a tener instalado, instalemoslo. Si no, carguemos sólo la libreria
+
+library(tidyverse)
+```
+
+
+
+Hoy vamos a trabajar con un [dataset de terrorismo global](https://www.kaggle.com/START-UMD/gtd/) elaborado y mantenido por investigadores del National Consortium for the Study of Terrorism and Responses to Terrorism (START), en la Universidad of Maryland, y que tiene información de ataques terroritas desde 1970 a 2017. 
+
+```{r}
+#cargamos nuestro dataset
+data <- read.csv("D:/Guada/Clases/Clases_R_Eze/Clase 2/gtd/globalterrorismdb_0718dist.csv")
+
+#si vemos que tarda mucho podemos descargarlo de kaggle(https://www.kaggle.com/START-UMD/gtd/download), deszipearlo y subirlo directamente desde nuestra carpeta
+```
+
+Con la funcion **dim()** podemos ver las dimensiones de nuestro dataset, observando que tiene más de 181 mil observaciones y 135 variables para diferentes países a nivel mundial
+
+```{r}
+dim(data)
+```
+
+Asimismo podemos ver un vistazo en primera instancia con la funcion **tail()**, para ver las últimas variables de nuestro dataset:
+```{r}
+tail(data)
+```
+
+Al tener muchas columnas resulta importante saber cuáles son y qué información contiene c/u. Usemos la función **names()** para averiguarlo:
+```{r}
+names(data)
+```
+
+¿Qué pasa si queremos ver algunas medidas resumen para conocer un poco más sobre la información que contenemos? 
+
+```{r}
+summary(data)
+```
+
+Una vez realizado esta pregunta, resulta relevante conocer qué información queremos saber con el objetivo de manipular más fácil nuestra información sin tantas columnas / observaciones que nos molesten y con la información adecuada. Para esto vamos a utilizar varias funciones:
+
+  - **select()** #para seleccionar columnas
+  
+  - **filter()** #para filtrar observaciones
+  
+  - **arrange()** #para ordenar nuestras observaciones (de mayor a menor, en ascendente o descendente)
+  
+  - **group_by()** #para agrupar observaciones en columnas
+  
+  - **mutate()** #para agregar nuevas variables
+  
+  - **summarize()** #siempre que hagamos operaciones que involucren group by las nuevas variables tenemos que agregarlas usando summarize
+  
+  - **join()** #para unir datasets con -al menos- una columna en común
+
+Y lo maravilloso de tidyverse es que podemos utilizar más de una función a la vez gracias a **pipe**: **%>%**. Pipe significa que dos o más funciones (como las que mencionabamos arriba - select y filter, por ejemplo) deben / pueden ser ejecutadas al mismo tiempo.  
+
+En ese sentido, un comando en tidyverse tiene este formato:
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/func_PIPE.png', 1)
+```
+
+```{r}
+data_pais_anio <- data %>% select(country, iyear) #si queremos generar un dataset que contenga sólo el país y el año en el que el ataque terrorista fue ejecutado
+```
+
+Plantiémos una pregunta de investigacion: ¿Qué países de América sufrieron mayor cantidad de atentados por año? ¿de qué tipo fueron estos atentados?
+
+1. **Seleccionemos sólo las columnas** que nos interesan:
+```{r}
+data_atentado <- data %>% select(country_txt, iyear, attacktype1_txt, region_txt) 
+data_atentado #vemos cómo nos queda la tabla
+```
+
+2. **Filtramos** los que sean de américa:
+```{r}
+data_atentado <- data %>% 
+  select(country_txt, iyear, attacktype1_txt, region_txt) %>% 
+  filter(region == "Central America & Caribbea" | "North America" | "South America") 
+
+data_atentado
+```
+
+3. **Agrupamos** por año, por país y por tipo de atentado
+```{r}
+data_atentado <- data %>% 
+  select(country_txt, iyear, attacktype1_txt, region_txt) %>% 
+  filter(region == "Central America & Caribbea" | "North America" | "South America") %>%
+  group_by(country_txt, iyear, attacktype1)
+
+data_atentado
+```
+
+4. **Generamos una tabla de frecuencias** para conocer esta información (teniendo en cuenta que hicimos un group by antes)*:
+```{r}
+data_atentado <- data %>% 
+  select(country_txt, iyear, attacktype1_txt, region_txt) %>% 
+  filter(region_txt == "Central America & Caribbea" | region_txt == "North America" | region_txt == "South America") %>%
+  group_by(country_txt, iyear, attacktype1_txt) %>%
+  summarise(cantidad = n()) #la funcion n() es usada para solicitar la     frecuencia con la que aparece una observacion 
+
+data_atentado
+```
+
+De la misma manera que le pedimos la cantidad de casos, podemos pedirle el promedio -mean()-, la mediana -median()-, la suma -sum()-
+
+* Si no tuvieramos o involucraramos un group by podemos aplicar la funcion **mutate()**.
+
+5. **Ordenamos** por cantidad de atentados por año para cada país:
+
+```{r}
+data_atentado <- data %>% 
+  select(country_txt, iyear, attacktype1_txt, region_txt) %>% 
+  filter(region_txt == "Central America & Caribbea" | region_txt == "North America" | region_txt == "South America") %>%
+  group_by(country_txt, iyear, attacktype1_txt) %>%
+  summarise(cantidad = n()) %>% 
+  arrange(desc(cantidad))
+data_atentado
+```
+
+Ahora sabemos que Chile fue el país que más atentados recibió en forma de "explosiones" y fue en 1984. 
+
+Ahora, qué pasa si queremos saber simplemente la cantidad, sin conocer el tipo de atentado para todos los atentados posteriores al 2000 en Argentina y sus vecinos:
+
+```{r}
+library(hrbrthemes) #si no tenemos instalados los paquetes, los tenemos que instalar con la funcion "install.packages()"
+library(viridis)
+library(plotly)
+
+p <- data %>% 
+  #manipulacion de datos:
+  select(country_txt, iyear, region_txt, attacktype1_txt) %>% #como vemos podemos realizar visualizaciones desde tidyverse
+  filter(country_txt == "Argentina" | country_txt == "Brazil",  iyear > 2000 ) %>%
+  group_by(country_txt, iyear, attacktype1_txt) %>%
+  summarise(cantidad = n()) %>% 
+  arrange(desc(cantidad)) %>%
+  #visualizamos la info
+  ggplot( aes(y=attacktype1_txt, x=cantidad, fill=country_txt)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=11)
+    ) +
+    ggtitle("Boxplot de atentados en América del Sur") + 
+  xlab("Cantidad de antentados") + 
+  ylab("Países") 
+p <- ggplotly(p)
+p
+```
+```{r}
+unique(data_atentado$country_txt)
+```
+
+Por último: nos quedan los **join()**! Es una función muy importante, ya que nos permite unir tablas a partir de variables / columnas en común. Solo hay que chequear que las observaciones de la columna con la que vamos a unirla esten redactadas de la misma manera.
+
+Pero antes de entrar de lleno en cómo funcionan los **joins()** es importante que entendamos la lógica dentras de una base de datos relacional. Existen dos cuestiones muy importantes a tener en cuenta: las **primaries keys** y las **foreign key**.
+
+Las primeras, las **claves primarias** o primary key son representan la minima observacion que identifica cada observacion de nuestro dataset (como un id unico para cada fila). La segunda, la foreign key es una clave que es la primary key de otro dataset y que sirve como punto de unión entre ambas.
+
+```{r}
+knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/primarykey.jpg', 1))
+```
+
+Para más información: https://bloginspanish.wordpress.com/2015/06/21/diferencia-entre-llave-primaria-primary-key-y-llave-foranea-foreign-key/ 
+
+Una vez entendido esto, es posible realizar dichos joins, reconociendo cuáles son las columnas que debemos utilizar para hacer el join.
+
+En este sentido hay muchas maneras de hacer el join, en cada caso se debe aplicar el que corresponda:
+
+```{r}
+knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/sql-joins.jpg', 1))
+```
+
+¿Que pasa si queremos traer los poligonos de los paises a nuestro dataset de data_atentado para poder realizar un mapa?
+
+```{r}
+library(sf) #debemos instalar el paquete si aun no lo tenemos instalado
+mapa_paises <- st_read("https://datahub.io/core/geo-countries/r/countries.geojson")
+names(mapa_paises)[2] <- "Code"
+mapa_paises <- mapa_paises %>% filter(Code == "ARG" | Code == "BRA" | Code == "CHL" | Code == "PER" | Code == "COL" | Code == "ECU" | Code == "PRY" | Code == "BOL" | Code == "VEN" | Code == "SUR" | Code == "URY" | Code == "GUY" | Code == "FLK")
+```
+```{r}
+#podemos agregar info importante a nuestro dataset de data_atentado asi podemos unirlo con mapa_paises
+data_atentado <- data_atentado %>% mutate(Code = case_when(
+  country_txt == "Argentina" ~ 'ARG', 
+  country_txt == "Brazil" ~ 'BRA',
+  country_txt == "Chile" ~ 'CHL',
+  country_txt == "Peru" ~ 'PER',
+  country_txt == "Colombia" ~ 'COL',
+   country_txt == "Ecuador" ~ 'ECU',
+  country_txt == "Paraguay" ~ 'PRY',
+  country_txt == "Bolivia" ~ 'BOL',
+  country_txt == "Venezuela" ~ 'VEN',
+  country_txt == "Suriname" ~ 'SUR',
+  country_txt == "Uruguay" ~ 'URY',
+  country_txt == "Guyana" ~ 'GUY',
+  country_txt == "Falkland Islands" ~ 'FLK',
+))
+```
+
+
+1. debemos encontrar una columna/ multiples columnas que actúen de primary key y foreign key para poder unirlos
+```{r}
+
+data_map <- mapa_paises %>% inner_join(data_atentado, by = "Code")
+head(data_map)
+```
+
+```{r}
+library(leaflet)
+#generamos la paleta de colores
+mypalette <- colorNumeric( palette="viridis",  domain=data_map$cantidad, na.color="transparent")
+mypalette(c(45,43))
+
+#le decimos a R qué información queremos que nos dé en el mapa
+mytext <- paste(
+    "País: ", data_map$country_txt,"<br/>",
+    "Porcentaje_PBI: ", round(data_map$cantidad, 2), 
+    sep="") %>%
+  lapply(htmltools::HTML)
+
+#armamos el mapa
+m <- leaflet(data_map) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=2) %>%
+  addPolygons( fillColor = ~mypalette(cantidad), stroke=FALSE, label = mytext, smoothFactor = 0.7 )
+
+m
+```
