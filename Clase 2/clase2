@@ -141,23 +141,60 @@ nombre_dataset$nombre_columna <- as.character(nombre_dataset$nombre_columna)
 
 ## Administración del espacio en memoria
 
-Como sabemos, 
+Como sabemos, cuidar de no sobre cargar la computadora es una parte escencial del trabajo con datos, hay que asignar estrategicamente el espacio en memoria.
+
+Pero primero:
+
+### ¿Cómo funciona exactamente la memoria en un cpu?
+
+La **memoria** es utilizada para almacenar programas de la aplicación. Es decir, es un componente de almacenamiento, compuesto por **chips de memorias** que tienen **celulas** (casilleros ó celdas que se identifican por una dirección en estos chips de memoria). 
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/memory.png', 1)
+```
+
+Cuando nosotros descargamos la versión de R x 64 bits, le estamos indicando a nuestra computadora cuánto espacio de memoria queremos utilizar al programar en R.
 
 ```{r}
-install.packages("pryr")
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/memory2.png', 1)
+```
+
+Con el objetivo de ir conociendo cómo administrar más eficientemente la memoria, he aquí algunos tips:
+
+```{r}
+install.packages("pryr") #descarguemos pryr si no lo tenemos instalado y su libreria correspondiente
 library(pryr)
 ```
+
+Si queremos saber cuánto espacio de memoria estamos usando podemos usar la funcion **mem_used()**:
+
 ```{r}
 mem_used()
 ```
+
+Si queremos saber cuánto espacio de memoria tenemos podemos preguntarle a R con la función **mem_used()**:
 
 ```{r}
 memory.size()
 ```
 
+Por otro lado, si queremos saber cuánto espacio ocupa un objeto especifico, podemos preguntarle a R con **object.size()** 
+
 ```{r}
 object_size(p3)
 ```
+
+
+Más allá de estas estrategias, resulta fundamental saber y aprender a manejar estrategicamente los recursos que tenemos. En este sentido, algunos tips para programar más efientemente:
+
+> Planear los proyectos antes de arrancar y el paso a paso. 
+
+> Borrar variables que puedan llegar a ocupar mucho espacio.
+
+> Utilizar archivos desde la web, sin descargarlos.
+
+> Dedicarle tiempo a la fase de limpieza y manipulacion de datos, ya que resulta una parte fundamental que nos puede ahorrar mucho trabajo y tiempo si lo hacemos eficientemente. (Preferentemente en formato tidy)
+
+> Utilizar formatos que pesen lo menos posible (json, geojson, csv)
 
 ## Manipulación de datos
 
@@ -168,6 +205,11 @@ Un buen paquete para trabajar principalmente en la manipulación de datos es **t
 ###¿Qué es tidyverse?
 
 Tidyverse es un paquete que contiene un múltiples paquetes que nos van a ayudar no sólo, pero principalmente, a manipular datos. 
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse.png', 1)
+```
+
 
 ```{r}
 knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse_data_science.png', 1)
@@ -360,6 +402,8 @@ mapa_paises <- st_read("https://datahub.io/core/geo-countries/r/countries.geojso
 names(mapa_paises)[2] <- "Code"
 mapa_paises <- mapa_paises %>% filter(Code == "ARG" | Code == "BRA" | Code == "CHL" | Code == "PER" | Code == "COL" | Code == "ECU" | Code == "PRY" | Code == "BOL" | Code == "VEN" | Code == "SUR" | Code == "URY" | Code == "GUY" | Code == "FLK")
 ```
+
+
 ```{r}
 #podemos agregar info importante a nuestro dataset de data_atentado asi podemos unirlo con mapa_paises
 data_atentado <- data_atentado %>% mutate(Code = case_when(
@@ -396,7 +440,7 @@ mypalette(c(45,43))
 #le decimos a R qué información queremos que nos dé en el mapa
 mytext <- paste(
     "País: ", data_map$country_txt,"<br/>",
-    "Porcentaje_PBI: ", round(data_map$cantidad, 2), 
+    "Cantidad de atentados: ", round(data_map$cantidad, 2), 
     sep="") %>%
   lapply(htmltools::HTML)
 
@@ -407,4 +451,5 @@ m <- leaflet(data_map) %>%
   addPolygons( fillColor = ~mypalette(cantidad), stroke=FALSE, label = mytext, smoothFactor = 0.7 )
 
 m
+
 ```
