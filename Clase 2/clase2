@@ -11,7 +11,7 @@ output: html_document
 Según [R for Data Scince (R4DS)](https://r4ds.had.co.nz/explore-intro.html), es un libro Introductorio para aprender R elaborado por Garrett Grolemund & Hadley Wickham -que también tiene su [versión en español](https://es.r4ds.hadley.nz/)- cuando trabajamos con datos no podemos hacerlo de manera desordenada e improvisada, sino que es recomendable seguir ciertos pasos: 
 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/r4ds_hadley.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/r4ds_hadley.png', 1)
 ```
 
 En primer lugar **importar** el/los archivos. Una vez realizado esto, podemos empezar la fase de **"exploración"** de nuestros datos: La misma comienza con la limpieza y orden con el objetivo de que que queden en formato [**tidy**](https://vita.had.co.nz/papers/tidy-data.pdf), es decir, __"cada columna es una variable y cada fila una observación"__ señalan en R para Ciencia de Datos.
@@ -147,13 +147,13 @@ Pero primero:
 
 La **memoria** es utilizada para almacenar programas de la aplicación. Es decir, es un componente de almacenamiento, compuesto por **chips de memorias** que tienen **celulas** (casilleros ó celdas que se identifican por una dirección en estos chips de memoria). 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/memory.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/memory.png', 1)
 ```
 
 Cuando nosotros descargamos la versión de R x 64 bits, le estamos indicando a nuestra computadora cuánto espacio de memoria queremos utilizar al programar en R.
 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/memory2.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/memory2.png', 1)
 ```
 
 Con el objetivo de ir conociendo cómo administrar más eficientemente la memoria, he aquí algunos tips:
@@ -205,13 +205,13 @@ Un buen paquete para trabajar principalmente en la manipulación de datos es **t
 Tidyverse es un paquete que contiene un múltiples paquetes que nos van a ayudar no sólo, pero principalmente, a manipular datos. 
 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/tidyverse.png', 1)
 ```
 He aquí todas las funcionalidades de tidyverse según c ómo veniamos hsblando:
 
 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/tidyverse_data_science.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/tidyverse_data_science.png', 1)
 ```
 Para comenzar a usar tidyverse resulta necesario instalarlo y cargar las librerías :
 
@@ -274,7 +274,7 @@ Y lo maravilloso de tidyverse es que podemos utilizar más de una función a la 
 En ese sentido, un comando en tidyverse tiene este formato:
 
 ```{r}
-knitr::include_graphics('Clases_R_Eze/Clase 2/images/func_PIPE.png', 1)
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/func_PIPE.png', 1)
 ```
 
 Comencemos!!!
@@ -378,7 +378,7 @@ Pero antes de entrar de lleno en cómo funcionan los **joins()** es importante q
 Las primeras, las **claves primarias** o primary key son representan la minima observacion que identifica cada observacion de nuestro dataset (como un id unico para cada fila). La segunda, la foreign key es una clave que es la primary key de otro dataset y que sirve como punto de unión entre ambas.
 
 ```{r}
-knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/primarykey.jpg', 1))
+knitr::include_graphics('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/primarykey.jpg', 1))
 ```
 
 Para más información: https://bloginspanish.wordpress.com/2015/06/21/diferencia-entre-llave-primaria-primary-key-y-llave-foranea-foreign-key/ 
@@ -387,7 +387,7 @@ Una vez entendido esto, es posible realizar dichos joins, reconociendo cuáles s
 En este sentido hay muchas maneras de hacer el join, en cada caso se debe aplicar el que corresponda:
 
 ```{r}
-knitr::include_graphics(rep('Clases_R_Eze/Clase 2/images/sql-joins.jpg', 1))
+knitr::include_graphics(rep('https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/Images/sql-joins.jpg', 1))
 ```
 
 ¿Que pasa si queremos traer los poligonos de los paises a nuestro dataset de data_atentado para poder realizar un mapa?
