@@ -1,0 +1,189 @@
+---
+title: "clase3"
+author: "guada"
+date: "26/2/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# CLASE 2: VISUALIZACION DE DATOS EN R
+
+## Introduccion
+Recordando un poco de la clase anterior habiamos dicho que todo lo que no se comunica, es laburo que se pierde. Y para esto la visualizacion representa un elemento escencial en el proceso del trabajo con datos.
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/r4ds_hadley.png', 1)
+```
+
+Hay muchas recomendaciones a la hora de trabajar pero por sobre todo hay que tener en cuenta que _"Una buena gramática nos permitirá conocer la *composición de gráficos* complicados y *revelar conexiones* inesperadas entre gráficos aparentemente diferentes"_ (Cox 1978). 
+
+Siendo que en general trabajamos con datasets que tienen muchas variables, la idea es descubrir patrones, encontrar relaciones con el objetivo de comunicarlos y generar cambios.
+
+```{r}
+knitr::include_graphics('Clases_R_Eze/Clase 2/images/img_def.png', 1)
+```
+
+El primer gráfico que se conoce en la historia exclusivamente a partir de datos es de [Charles Minard](https://en.wikipedia.org/wiki/Charles_Joseph_Minard) que grafico en 1812 la campaña Napoleonica -fallida- para invadir Rusia y cómo se da la evolución de la conquista conforme van llegando a Moscú.
+Y lo maravilloso del grafico es que muestra en dos dimensiones 6 tipos de variables diferentes: la cantidad de tropas, la distancia, la temperatura, la longitud, la latitud, la direccion del viaje y las fechas donde se sufren bajas. 
+
+Dicho grafico [es reproducible en R](https://github.com/andrewheiss/fancy-minard).
+
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/Minard.png', 1)
+```
+
+## Metodologia
+
+Al trabajar con grandes cantidades de datos resulta necesario que seamos precisos con la cuestión metodológica. Hagamos un repaso!
+
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/variable-dependiente.png', 1)
+```
+
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/tiposVariables.png', 1)
+```
+
+Una vez entendido esto, es posible ver que en R hay múltiples gráficos que se pueden realizar:
+
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/flowchartmod.png', 1)
+```
+
+## R BASE
+
+En esta ocasión vamos a trabajar con Indicadores de la [FUNDACION GAPMINDER](gapminder) que desarrolla estadisticas globales para Naciones Unidas desde 2005 y fue conocida a partir de una [Ted Talk](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen?language=es) realizada por uno de sus co-fundadores Hans Rosling.
+
+```{r}
+data <- read.csv("https://github.com/Guadag12/R4RRII/raw/master/Clase%203/data_clase3.csv")
+```
+En primer lugar observemos nuestras variables:
+```{r}
+head(data)
+```
+
+```{r}
+data_sudamerica <- data %>% filter( Code == "ARG" | Code == "BOL" | Code == "BRA" |
+                                     Code == "PRY" | Code == "URY")
+
+```
+
+
+```{r}
+boxplot(data_sudamerica$gini_coeff~data_sudamerica$country,
+        main="Boxplot del Indice de Gini para países sudamericanos",
+       xlab="País",
+       ylab="Coeficiente de Gini",
+        col="orange",
+        border="brown")
+```
+
+
+¿Qué pasa si nos preguntamos por la mortalidad en argentina según el grado de redistribucion de la riqueza?
+```{r}
+data_argentina <- data %>% filter(country == "Argentina" & year > 1950)
+
+plot(data_argentina$gini_coeff, data_argentina$child_mortality, main = "Coeficiente de Gini y Mortalidad Infantil",
+     xlab = "Coeficiente de Gini", ylab = "Mortalidad Infantil",
+     pch = 19, frame = FALSE)
+```
+```{r}
+plot(data_argentina$gini_coeff, data_argentina$child_mortality, main = "Coeficiente de Gini y Mortalidad Infantil para Argentina",
+     xlab = "Coeficiente de Gini", ylab = "Mortalidad Infantil",
+     pch = 19, frame = FALSE) +
+lines(lowess(data_argentina$gini_coeff, data_argentina$child_mortality), col = "blue")
+```
+
+
+## GGPLOT
+
+Sin embargo, cuando de Visualizacion se trata, el mejor paquete para trabajarlo en R se llama [ggplot2](https://ggplot2.tidyverse.org/) y lo tenemos cargado ya en nuestra libreria *TIDYVERSE*
+
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/ggplotmeme.jpeg', 1)
+```
+
+ggplot2() es una herramienta superpoderosa para visualizar graficos en R y su creador es el mismo de Tidyverse: [Hadley Wickham](https://twitter.com/hadleywickham). Y la magia consiste en *"dividir los gráficos en componentes semánticos como escalas y capas"*.
+
+Por lo cual tenemos múltiples posibilidades y e infinitas combinaciones a realizar en un mismo paquete.
+```{r}
+knitr::include_graphics('https://github.com/Guadag12/R4RRII/raw/master/Clase%203/images/cheatsheet.png', 1)
+```
+
+```{r}
+library(ggplot2)
+```
+
+Se basa en capas que se agregan a partir del signo *"+"* - asi como en tidyverse teniamos al *"%>%"*. 
+Y consta de un fondo gris ya que múltiples investigaciones hablan de que ayuda y fomenta el contraste.
+Las formas geometricas y la estetica son los aspectos principales para distinguir capas y escalas.
+
+
+Podemos hacer un scatterplot como el que teniamos arriba, por ejemplo asi:
+
+```{r}
+ggplot(data = data_argentina) + 
+  geom_point(mapping = aes(x = data_argentina$gini_coeff, y = data_argentina$child_mortality)) +
+  ggtitle("Scatterplot sobre la redistribución de la riqueza y la mortalidad infantil") +
+  xlab("Coefficiente de Gini") + ylab("Mortalidad infantil")
+
+```
+
+### Aesthetic mappings
+
+Y de lo que se distingue ggplot2() de otros paquetes es en la capacidad de hacer visualizaciones más lindas y simples. La funcion **aes()** es muy importante para esto.
+Podemos cambiarle el color:
+```{r}
+ggplot(data = data_argentina) + 
+  geom_point(mapping = aes(x = data_argentina$gini_coeff, y = data_argentina$child_mortality, color = data_argentina$year)) +
+  ggtitle("Scatterplot sobre la redistribución de la riqueza y la mortalidad infantil") +
+  xlab("Coefficiente de Gini") + ylab("Mortalidad infantil")
+```
+
+El tamaño:
+```{r}
+ ggplot(data = data_argentina) + 
+  geom_point(mapping = aes(x = data_argentina$gini_coeff, y = data_argentina$child_mortality,color = data_argentina$year, size = data_argentina$child_mortality)) +
+  ggtitle("Scatterplot sobre la redistribución de la riqueza y la mortalidad infantil") +
+  xlab("Coefficiente de Gini") + ylab("Mortalidad infantil") 
+```
+Podemos hacer boxplots:
+
+```{r}
+data_sudamerica %>%
+  ggplot( aes( y=gini_coeff, fill=country)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    ggtitle("Boxplot del Indice de Gini y el PBI para países sudamericanos") +
+  ylab("Coefficiente de Gini") 
+```
+
+
+Podemos incluso cambiarle el fondo gris con la funcion *theme()*:
+
+```{r}
+data_sudamerica %>%
+  ggplot( aes( y=gini_coeff, fill=country)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    ggtitle("Boxplot del Indice de Gini para países sudamericanos") +
+    xlab("") +
+  theme_classic() 
+
+```
+Podemos hacer diferentes graficos para cada pais con la funcion *facet_grid()*: 
+```{r}
+data_sudamerica %>%
+  ggplot( aes(y=gini_coeff, fill=country)) +
+    geom_boxplot() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    ggtitle("Boxplot del Indice de Gini para países sudamericanos") +
+    xlab("") +
+  facet_wrap(~ country, nrow =2)
+
+```
