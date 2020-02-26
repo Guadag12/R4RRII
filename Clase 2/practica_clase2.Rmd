@@ -1,0 +1,139 @@
+---
+title: "practica_clase2"
+author: "guada"
+date: "24/2/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Practica 2: Aprendiendo Tidyverse con dataset de victimas del terrorismo de estado
+
+## Actividades:
+
+1. Subir a R el dataset de "Listado de víctimas del accionar represivo ilegal" elaborado por el Ministerio de Justicia y Derechos Humanos (https://datos.gob.ar/dataset/justicia-registro-unificado-victimas-terrorismo-estado--ruvte-) que contiene un listado de las desapariciones y asesinatos ocurridos durante 1966 y 1983
+
+(Recomendaciones: Como podemos ver el dataset tiene inconvenientes con los caracteres especiales, eso significa que tenemos que cambiarle el encoding.. el mismo se hace agregando dentro de la funcion *read.csv( path = , encoding = "Latin-1")*) 
+
+
+```{r}
+data_terrorismo_arg <- read.csv("http://datos.jus.gob.ar/dataset/d43fa140-f43f-4cc2-8491-b1d8bb899de4/resource/c6b674bc-e178-41f3-81f5-0f10038e1688/download/victimas-accionar-represivo-ilegal.csv", encoding = "Latin-1", stringsAsFactors = FALSE)
+```
+
+
+2. Realizamos un head() para ver las variables
+```{r}
+head(data_terrorismo_arg)
+```
+
+3. ¿Qué tipo de variables tiene la tabla? (numericas, caracteres, etc)
+
+```{r}
+typeof(data_terrorismo_arg$anio_nacimiento)
+```
+4. Carguemos la librería de tidyverse y conozcamos más sobre la información que brinda el dataset
+```{r}
+library(tidyverse)
+```
+a. Queremos saber, en principio, cuál es el país con mayor cantidad de desapariciones forzadas según la nacionalidad. 
+```{r}
+data_terrorismo_arg %>%
+  filter(tipificacion_ruvte == "DESAPARICION FORZADA" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / PROBADO EL DECESO" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / EXHUMADOS E IDENTIFICADOS SUS RESTOS" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / INVESTIGADO EN CAUSA JUDICIAL" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / EN INVESTIGACION" |
+          tipificacion_ruvte ==  "DESAPARICION FORZADA / A DETERMINAR TIPIFICACION" |
+           tipificacion_ruvte ==  "DESAPARICION FORZADA (NIÑA) / EXHUMADOS E IDENTIFICADOS SUS RESTOS" |
+           tipificacion_ruvte ==  "DESAPARICION FORZADA (NIÑO) / EXHUMADOS E IDENTIFICADOS SUS RESTOS" | tipificacion_ruvte ==  "DESAPARICION FORZADA / PROBADO EN CAUSA JUDICIAL" ) %>%
+  group_by(pais_nacimiento) %>%
+  summarize(cantidad = n()) %>%
+  arrange(desc(cantidad))
+```
+
+a.a. ¿Cuál es la provincia con mayor cantidad de desapariciones forzadas?
+
+```{r}
+data_terrorismo_arg %>%
+  filter(tipificacion_ruvte == "DESAPARICION FORZADA" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / PROBADO EL DECESO" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / EXHUMADOS E IDENTIFICADOS SUS RESTOS" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / INVESTIGADO EN CAUSA JUDICIAL" |
+           tipificacion_ruvte == "DESAPARICION FORZADA / EN INVESTIGACION" |
+          tipificacion_ruvte ==  "DESAPARICION FORZADA / A DETERMINAR TIPIFICACION" |
+           tipificacion_ruvte ==  "DESAPARICION FORZADA (NIÑA) / EXHUMADOS E IDENTIFICADOS SUS RESTOS" |
+           tipificacion_ruvte ==  "DESAPARICION FORZADA (NIÑO) / EXHUMADOS E IDENTIFICADOS SUS RESTOS" | tipificacion_ruvte ==  "DESAPARICION FORZADA / PROBADO EN CAUSA JUDICIAL" ) %>%
+  group_by(provincia_nacimiento) %>%
+  summarize(cantidad = n()) %>%
+  arrange(desc(cantidad))
+```
+
+b. Queremos saber cuántos años tendrian al dia de hoy las personas registradas en el dataset cuya provincia de nacimiento sea "BUENOS AIRES" y que figure en el nuevo dataset sólo las columnas de "provincia_nacimiento", "anio_nacimiento" y la "edad_actual".
+
+```{r}
+#Primero vamos a tener que pasarlo a numerico
+data_terrorismo_arg$anio_nacimiento <- as.numeric(as.character(data_terrorismo_arg$anio_nacimiento))
+```
+
+```{r}
+data_edad <- data_terrorismo_arg %>%
+  filter(provincia_nacimiento == "BUENOS AIRES") %>%
+  mutate(edad_actual = 2019-anio_nacimiento) %>%
+  select(provincia_nacimiento, anio_nacimiento, edad_actual) %>%
+  drop_na()
+```
+
+b.a.¿Cuál es la edad promedio que tendrian al día de hoy?
+```{r}
+mean(data_edad$edad_actual)
+```
+
+
+5. ¿Qué pasa si queremos saber el género de la persona y no figura en el dataset? Vamos paso a paso. 
+
+a. Podemos empezar construirlo gracias al registro realizado por el gobierno de la Ciudad que tendremos que cargar en nuestro environment y que esta cargado en el github. (Acordemosnos de modificar el encoding, que en este caso es: "UTF-8").
+
+```{r}
+nombres <- read.csv("https://raw.githubusercontent.com/Guadag12/R4RRII/master/Clase%202/nombres.csv", encoding = "UTF-8")
+```
+
+
+b. La idea es realizar un join y unir ambas tablas, sin embargo no tenemos una columna en nuestro dataset que unicamente sean nombres. Hay que construirla con la funcion "cSplit()" del paquete splitstackshape
+```{r}
+library(splitstackshape)
+data_terrorismo_arg <- cSplit(indt = data_terrorismo_arg, splitCols = 'apellido_paterno_nombres',  sep = " ")
+
+#llamamos nombre a la columna que nos interesa
+names(data_terrorismo_arg)[19] <- "nombre" 
+
+#vamos a trabajar con las columnas que nos interesan
+data_terrorismo_arg <- data_terrorismo_arg %>% select(anio_denuncia, tipificacion_ruvte,id_unico_ruvte,apellido_materno, apellido_casada, edad_al_momento_del_hecho,
+documentos, anio_nacimiento,  provincia_nacimiento, pais_nacimiento, nacionalidad, embarazo,
+fecha_lugar_detencion_secuestro, fecha_lugar_asesinato_o_hallazgo_de_restos, fotografia, 
+provincia_nacimiento_indec_id, pais_nacimiento_indec_id, apellido_paterno_nombres_1, 
+nombre )
+
+```
+
+c. Realizamos el join y eliminamos los duplicados!
+```{r}
+data_terrorismo_arg1 <- left_join(data_terrorismo_arg, nombres, by = "nombre")
+
+#eliminamos las columnas que estan de mas
+data_terrorismo_arg1 <- data_terrorismo_arg1[!duplicated(data_terrorismo_arg1$id_unico_ruvte), ]
+```
+
+¿Podemos conocer el porcentaje de personas desaparecidas segun el género?
+```{r}
+data_terrorismo_arg1 %>% 
+  group_by(genero) %>%
+  summarize(porcentaje = n()/8753)
+```
+
+```{r}
+#incluso si lo queremos hacer más prolijo seria algo asi:
+data_terrorismo_arg1 %>%  group_by(genero) %>% summarize(porcentaje = paste0(round((n()/8753)*100, 2), "%"))
+```
